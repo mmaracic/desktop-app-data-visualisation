@@ -11,7 +11,7 @@ uv sync
 
 Run the following command to install the frontend dependencies:
 ```bash
-cd frontend
+cd react
 npm install
 ```
 
@@ -27,6 +27,27 @@ Run the application with:
 uv run -m src.main
 ```
 The application accepts `--host` and `--port` parameters to configure the backend server address.
+
+### Running the application on Ubuntu
+
+In Ubuntu additional dependencies are required to run the application. Install them with:  
+
+Requested by PyCairo, which is a dependency of PyWebView.
+```bash
+sudo apt install cmake
+sudo apt install libcairo2-dev pkg-config python3-dev
+
+```
+Requested by PyGObject, which is a dependency of PyWebView.
+```bash
+sudo apt install libgirepository1.0-dev 
+```
+Two environment variables are preventing successfull startup of PYWebView on Ubuntu. Use to remove them before running the application:
+```bash
+unset GTK_PATH
+unset GIO_MODULE_DIR
+```
+https://stackoverflow.com/questions/75921414/java-symbol-lookup-error-snap-core20-current-lib-x86-64-linux-gnu-libpthread
 
 ## Development mode
 In development mode the application proxies frontend requests to the Vite dev server, so no build step is needed. Start both servers in separate terminals:
