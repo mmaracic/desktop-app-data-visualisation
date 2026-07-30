@@ -1,16 +1,22 @@
 """Desktop application entry point combining FastAPI, uvicorn, and pywebview."""
 
 import argparse
-from fastapi.staticfiles import StaticFiles
 import logging
-from pydantic import BaseModel
-import uvicorn
-from src.colored_log_formatter import ColoredLogFormatter
-from src.dev_proxy import _dev_proxy
 import threading
+
+import fastapi
+import uvicorn
 import webview
 from fastapi import FastAPI
+from fastapi.concurrency import asynccontextmanager
+from fastapi.staticfiles import StaticFiles
+from pydantic import BaseModel
+
 from src.api import api
+from src.colored_log_formatter import ColoredLogFormatter
+from src.config.environment_config import EnvironmentConfig
+from src.database.azure_repository import AzureRepository
+from src.dev_proxy import _dev_proxy
 
 log_handler = logging.StreamHandler()
 log_handler.setFormatter(
@@ -31,7 +37,22 @@ class Config(BaseModel):
     dev: bool = False
 
 
-app = FastAPI()
+@asynccontextmanager
+async def lifespan(app: fastapi.FastAPI):
+    """
+    Lifespan context manager for the FastAPI application.
+    """
+    settings = EnvironmentConfig()
+    logger.info("Settings: %s", settings)
+    app.state.azure_repository = AzureRepository(
+        connection_string=settings.azure_cosmos_connection_string,
+        database_name=settings.azure_cosmos_database_name,
+        container_name="your_container_name",  # Replace with your actual container name
+    )
+    yield
+
+
+app = FastAPI(lifespan=lifespan)
 app.include_router(api.router, prefix="/api")
 
 
@@ -82,7 +103,7 @@ def main() -> None:
 
     server = f"http://{config.host}:{config.port}"
     logger.info("Backend server starting at %s", server)
-    window = webview.create_window("Hello world", server)
+    window = webview.create_window("Data visualisation Application", server)
     if window is None:
         logger.error("Failed to create webview window, shutting down backend server...")
         return
