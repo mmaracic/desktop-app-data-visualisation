@@ -1,7 +1,14 @@
 # Readme
 
 Python desktop application with React Typescript UI using PyWebView.  
-https://pywebview.flowrl.com/
+https://pywebview.flowrl.com/  
+Template desktop app project: 
+https://github.com/mmaracic/desktop-app-python-react
+
+Implements the visualisation of data from Azure Cosmos DataIngestion DB using FastAPI backend and React frontend.
+
+DataIngestion DB is being populated by DataIngestion project: 
+https://github.com/mmaracic/azure-data-ingestion
 
 ## Setup
 Run the following command to install the backend dependencies:
@@ -18,7 +25,7 @@ npm install
 ## Run
 Build the frontend with:
 ```bash
-cd frontend
+cd react
 npm run build
 ```
 
