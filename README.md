@@ -22,6 +22,8 @@ cd react
 npm install
 ```
 
+Create a `.env` file in the root directory of the project, use the `.env.sample` file as a template.
+
 ## Run
 Build the frontend with:
 ```bash
