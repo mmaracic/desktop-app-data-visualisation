@@ -1,4 +1,4 @@
-import type { TabConfig } from './types'
+import type { PageConfig, TabConfig } from './types'
 
 export const CONTAINER_NAME = 'temperature-light-data-punat'
 
@@ -25,5 +25,14 @@ export const TABS: TabConfig[] = [
         description: 'Temperature sensor voltage over time',
         field: 'temperature_voltage',
         unit: 'V',
+    },
+]
+
+export const PAGES: PageConfig[] = [
+    {
+        id: 'light-and-temperature',
+        label: 'Light & Temperature',
+        title: 'Light and Temperature',
+        tabs: TABS,
     },
 ]

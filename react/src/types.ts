@@ -16,6 +16,13 @@ export interface TabConfig {
     unit: string
 }
 
+export interface PageConfig {
+    id: string
+    label: string
+    title: string
+    tabs: TabConfig[]
+}
+
 export interface TabState {
     startDate: string
     startTime: string
