@@ -3,6 +3,7 @@ import './App.css'
 import { PAGES } from './config'
 import { SideMenu } from './components/SideMenu'
 import { LightTemperaturePage } from './pages/LightTemperaturePage'
+import { BluetoothPage } from './pages/BluetoothPage'
 
 function App() {
   const [activePageId, setActivePageId] = useState(PAGES[0].id)
@@ -21,7 +22,11 @@ function App() {
       />
       <div className="app-content">
         <main className="page-content">
-          <LightTemperaturePage page={activePage} />
+          {activePage.kind === 'bluetooth' ? (
+            <BluetoothPage page={activePage} />
+          ) : (
+            <LightTemperaturePage page={activePage} />
+          )}
         </main>
       </div>
     </div>

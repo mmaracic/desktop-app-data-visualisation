@@ -33,6 +33,14 @@ export const PAGES: PageConfig[] = [
         id: 'light-and-temperature',
         label: 'Light & Temperature',
         title: 'Light and Temperature',
+        kind: 'charts',
         tabs: TABS,
+    },
+    {
+        id: 'bluetooth',
+        label: 'Bluetooth',
+        title: 'Bluetooth',
+        kind: 'bluetooth',
+        tabs: [],
     },
 ]

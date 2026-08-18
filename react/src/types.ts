@@ -20,7 +20,14 @@ export interface PageConfig {
     id: string
     label: string
     title: string
+    kind: 'charts' | 'bluetooth'
     tabs: TabConfig[]
+}
+
+export interface BleDevice {
+    address: string
+    name: string | null
+    details: string
 }
 
 export interface TabState {

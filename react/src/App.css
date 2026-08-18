@@ -1,5 +1,7 @@
 .app {
   width: 100%;
+  flex: 1;
+  min-height: 0;
   display: flex;
   align-items: stretch;
   box-sizing: border-box;
@@ -75,6 +77,9 @@
 .app-content {
   flex: 1;
   min-width: 0;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
   padding: 0 24px 48px;
   box-sizing: border-box;
 }
@@ -95,6 +100,27 @@
   margin: 24px 0 0;
   font-size: 1.2rem;
   color: var(--text-h);
+}
+
+.page-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.page {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+.tab-content {
+  flex: 1;
+  min-height: 0;
+  display: flex;
+  flex-direction: column;
 }
 
 .tabs {
@@ -134,6 +160,8 @@
   display: flex;
   flex-direction: column;
   gap: 16px;
+  flex: 1;
+  min-height: 0;
 }
 
 .tab-description {
@@ -181,6 +209,100 @@
   font-size: 0.9rem;
   background: var(--bg);
   color: var(--text-h);
+}
+
+.scan-button {
+  align-self: flex-start;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.scan-button:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.scan-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.device-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  border: 1px solid var(--border);
+  border-radius: 6px;
+}
+
+.device-item {
+  display: flex;
+  gap: 16px;
+  padding: 8px 12px;
+  border-bottom: 1px solid var(--border);
+  font-size: 0.9rem;
+  color: var(--text);
+  cursor: pointer;
+}
+
+.device-item.selected {
+  background: #2ecc71;
+  color: #fff;
+}
+
+.device-item.selected .device-name {
+  color: #fff;
+}
+
+.device-item:last-child {
+  border-bottom: none;
+}
+
+.device-name {
+  font-weight: 600;
+  color: var(--text-h);
+  min-width: 140px;
+}
+
+.device-address {
+  color: var(--text);
+  min-width: 140px;
+}
+
+.pair-button {
+  align-self: center;
+  background: var(--accent-bg);
+  color: var(--accent);
+  border: 1px solid var(--border);
+  border-radius: 4px;
+  padding: 8px 16px;
+  font-size: 0.9rem;
+  cursor: pointer;
+}
+
+.pair-button:hover:not(:disabled) {
+  background: var(--accent);
+  color: var(--bg);
+}
+
+.pair-button:disabled {
+  cursor: not-allowed;
+  opacity: 0.6;
+}
+
+.selected-address {
+  color: var(--text);
+  margin: 0;
+  font-size: 0.9rem;
+  text-align: center;
 }
 
 .status {

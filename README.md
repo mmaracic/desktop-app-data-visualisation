@@ -79,5 +79,11 @@ The webview opens `http://127.0.0.1:5000`. FastAPI forwards all non-API requests
 - Dev mode (`--dev`) proxies frontend requests to the Vite dev server, removing the need to build the frontend during development
 - Command-line arguments for configuring host and port
 
+### Bluetooth - BLE
+Using Bleak Python library to scan for BLE devices and connect to them.
+* https://github.com/hbldh/bleak
+* https://medium.com/@protobioengineering/how-to-control-a-bluetooth-le-device-with-python-3541c0cd2223
+
+
 # Issues
 - None currently known.
