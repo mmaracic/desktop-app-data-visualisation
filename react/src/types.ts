@@ -30,6 +30,25 @@ export interface BleDevice {
     details: string
 }
 
+export interface BleCharacteristic {
+    uuid: string
+    description: string
+    properties: string[]
+    value: string | null
+}
+
+export interface BleService {
+    uuid: string
+    description: string
+    characteristics: BleCharacteristic[]
+}
+
+export interface BleDeviceInfo {
+    name: string | null
+    address: string
+    services: BleService[]
+}
+
 export interface TabState {
     startDate: string
     startTime: string

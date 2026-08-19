@@ -69,7 +69,7 @@ uv run -m src.main --dev
 ```
 The webview opens `http://127.0.0.1:5000`. FastAPI forwards all non-API requests to Vite at `http://localhost:5173`, so changes to React source files are reflected immediately without rebuilding.
 
-## Features
+## Technical setup
 - FastAPI backend server with API routes prefixed under `/api`
 - React frontend served from the FastAPI backend as static files using `StaticFiles` middleware and mounting the React build directory
 - React Typescript frontend built with Vite
@@ -79,11 +79,22 @@ The webview opens `http://127.0.0.1:5000`. FastAPI forwards all non-API requests
 - Dev mode (`--dev`) proxies frontend requests to the Vite dev server, removing the need to build the frontend during development
 - Command-line arguments for configuring host and port
 
-### Bluetooth - BLE
+# Features
+- Displaying data from Azure Cosmos DataIngestion DB as a graph per selected container/tab i.e. per selected sensor
+- Listing available BLE devices and their services/characteristics
+
+## Bluetooth - BLE
 Using Bleak Python library to scan for BLE devices and connect to them.
 * https://github.com/hbldh/bleak
 * https://medium.com/@protobioengineering/how-to-control-a-bluetooth-le-device-with-python-3541c0cd2223
+Documentation for Bleak library: https://bleak.readthedocs.io/en/latest/
 
+
+# ToDo List
+* Implement pairing/security for BLE devices
+* Connect to a Camera using Pico
+* Return camera row data with index through Bluetooth to the application
+* Assemble row data into a 2D array and display it in the application as an image
 
 # Issues
 - None currently known.

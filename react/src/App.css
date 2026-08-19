@@ -156,6 +156,98 @@
   font-weight: 600;
 }
 
+.device-tab-button {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+}
+
+.tab-close {
+  border-radius: 50%;
+  line-height: 1;
+  padding: 0 4px;
+}
+
+.tab-close:hover {
+  background: var(--accent-bg);
+  color: var(--accent);
+}
+
+.device-info-row {
+  margin: 0;
+  font-size: 0.95rem;
+  color: var(--text);
+}
+
+.device-info-label {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.service-list {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  overflow-y: auto;
+}
+
+.service-list-title {
+  margin: 0;
+  color: var(--text-h);
+}
+
+.field-label {
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.service-item {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  padding: 10px 14px;
+}
+
+.service-title {
+  margin: 0;
+  font-weight: 600;
+  color: var(--text-h);
+}
+
+.service-uuid {
+  margin: 0 0 8px;
+  font-size: 0.8rem;
+  color: var(--text);
+  opacity: 0.7;
+}
+
+.characteristic-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.characteristic-item {
+  display: flex;
+  gap: 16px;
+  font-size: 0.85rem;
+  color: var(--text);
+  padding: 4px 0;
+  border-top: 1px solid var(--border);
+}
+
+.characteristic-field.characteristic-uuid {
+  opacity: 0.7;
+}
+
+.characteristic-field.characteristic-properties {
+  margin-left: auto;
+  font-style: italic;
+}
+
 .tab-panel {
   display: flex;
   flex-direction: column;
@@ -308,6 +400,7 @@
 .status {
   color: var(--text);
   font-style: italic;
+  text-align: center;
 }
 
 .status.error {
