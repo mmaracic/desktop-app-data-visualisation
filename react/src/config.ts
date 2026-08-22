@@ -2,6 +2,9 @@ import type { PageConfig, TabConfig } from './types'
 
 export const CONTAINER_NAME = 'temperature-light-data-punat'
 
+// Matches CAMERA_SERVICE_UUID in src/api/camera.py
+export const CAMERA_SERVICE_UUID = 'ba6a8c7b-a79d-4e66-b91e-2fe9f9e962ec'
+
 export const DEFAULT_START_HOURS_AGO = 168
 
 export const TABS: TabConfig[] = [

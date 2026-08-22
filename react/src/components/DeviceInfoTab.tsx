@@ -1,6 +1,10 @@
 import type { BleDeviceInfo } from '../types'
+import { CAMERA_SERVICE_UUID } from '../config'
+import { CameraFrame } from './CameraFrame'
 
 export function DeviceInfoTab({ device }: { device: BleDeviceInfo }) {
+    const isCamera = device.services.some((service) => service.uuid.toLowerCase() === CAMERA_SERVICE_UUID)
+
     return (
         <div className="tab-panel">
             <p className="device-info-row">
@@ -43,6 +47,7 @@ export function DeviceInfoTab({ device }: { device: BleDeviceInfo }) {
                     </div>
                 ))}
             </div>
+            {isCamera && <CameraFrame address={device.address} />}
         </div>
     )
 }

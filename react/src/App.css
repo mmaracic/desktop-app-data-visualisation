@@ -197,6 +197,37 @@
   color: var(--text-h);
 }
 
+.camera-frame-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.camera-frame-controls {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.camera-frame-controls input {
+  width: 64px;
+}
+
+.camera-frame-images {
+  display: flex;
+  justify-content: center;
+  gap: 12px;
+  flex-wrap: wrap;
+}
+
+.camera-frame-image {
+  border: 1px solid var(--border);
+  border-radius: 6px;
+  image-rendering: pixelated;
+  max-width: 256px;
+}
+
 .field-label {
   font-weight: 600;
   color: var(--text-h);

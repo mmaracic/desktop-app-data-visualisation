@@ -10,6 +10,7 @@ dependencies = [
     "bleak==3.0.2",
     "fastapi==0.136.1",
     "httpx==0.28.1",
+    "pillow==11.1.0",
     "pydantic==2.13.3",
     "pydantic-settings==2.14.2",
     "pywebview[gtk]==6.2.1",

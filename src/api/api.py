@@ -1,11 +1,16 @@
 """This module defines the API routes for the FastAPI application."""
 
+import base64
+import io
 import logging
 from datetime import datetime
 
 from bleak import BleakClient, BleakScanner
 from bleak.exc import BleakDBusError, BleakError
 from fastapi import APIRouter, HTTPException, Request
+
+from src.api.camera import CameraFrameError
+from src.api.camera_streamer import CameraFrameStreamer
 
 logger = logging.getLogger(__name__)
 
@@ -93,3 +98,86 @@ async def get_ble_device(request: Request, address: str) -> dict:
         ) from e
     finally:
         await client.disconnect()
+
+
+@router.post("/bluetooth/camera/{address}/start")
+async def start_collecting_camera_frames(
+    request: Request,
+    address: str,
+    num_rows: int,
+    num_cols: int,
+    bytes_per_pixel: int,
+) -> dict:
+    """Start the background BLE task collecting camera frames for `address` and return immediately."""
+    streamer: CameraFrameStreamer | None = request.app.state.camera_streamer
+    if streamer is not None and (
+        streamer.address != address
+        or streamer.num_rows != num_rows
+        or streamer.num_cols != num_cols
+        or streamer.bytes_per_pixel != bytes_per_pixel
+    ):
+        await streamer.stop()
+        streamer = None
+    if streamer is None:
+        streamer = CameraFrameStreamer(
+            address=address,
+            num_rows=num_rows,
+            num_cols=num_cols,
+            bytes_per_pixel=bytes_per_pixel,
+        )
+        request.app.state.camera_streamer = streamer
+        try:
+            await streamer.start()
+        except (BleakDBusError, BleakError) as e:
+            request.app.state.camera_streamer = None
+            logger.error(f"Failed to start camera stream for {address}: {e}")
+            raise HTTPException(
+                status_code=400,
+                detail=f"Bluetooth device is unavailable: {e}",
+            ) from e
+    return {"status": "collecting"}
+
+
+@router.post("/bluetooth/camera/{address}/stop")
+async def stop_collecting_camera_frames(request: Request, address: str) -> dict:
+    """Stop the background BLE task collecting camera frames for `address`, if running."""
+    streamer: CameraFrameStreamer | None = request.app.state.camera_streamer
+    if streamer is not None and streamer.address == address:
+        await streamer.stop()
+        request.app.state.camera_streamer = None
+    return {"status": "stopped"}
+
+
+@router.get("/bluetooth/camera/{address}/frame")
+async def get_camera_frame(request: Request, address: str) -> dict:
+    """Return the latest camera frame collected in the background for `address`, as base64 PNGs."""
+    streamer: CameraFrameStreamer | None = request.app.state.camera_streamer
+    if streamer is None or streamer.address != address:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No camera frame collection is running for {address}",
+        )
+
+    assembler = streamer.get_latest_frame()
+    if assembler is None:
+        raise HTTPException(
+            status_code=404,
+            detail=f"No camera frame collected yet for {address}",
+        )
+
+    try:
+        image, mask_image = assembler.to_image(), assembler.mask_to_image()
+    except CameraFrameError as e:
+        logger.error(f"Malformed camera row chunk from {address}: {e}")
+        raise HTTPException(status_code=422, detail=str(e)) from e
+
+    def _to_base64_png(img) -> str:
+        buffer = io.BytesIO()
+        img.save(buffer, format="PNG")
+        return base64.b64encode(buffer.getvalue()).decode("ascii")
+
+    return {
+        "image": _to_base64_png(image),
+        "mask_image": _to_base64_png(mask_image),
+        "timestamp": assembler.completed_at_or_now().isoformat(),
+    }
