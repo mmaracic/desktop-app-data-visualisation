@@ -2,6 +2,7 @@
 
 import base64
 import io
+import json
 import logging
 from datetime import datetime
 
@@ -11,6 +12,11 @@ from fastapi import APIRouter, HTTPException, Request
 
 from src.api.camera import CameraFrameError
 from src.api.camera_streamer import CameraFrameStreamer
+from src.database.bluetooth_metadata_repository import BluetoothMetadataRepository
+from src.model.bluetooth_metadata import (
+    BluetoothDeviceMetadata,
+    BluetoothDeviceMetadataUpdate,
+)
 
 logger = logging.getLogger(__name__)
 
@@ -43,10 +49,27 @@ async def get_ble_list(request: Request) -> list[dict]:
         {
             "address": device.address,
             "name": device.name,
-            "details": str(device.details),
+            "details": json.dumps(device.details, default=str),
         }
         for device in devices
     ]
+
+
+@router.get("/bluetooth/metadata")
+def get_bluetooth_metadata(request: Request) -> list[dict]:
+    """Return all stored Bluetooth device metadata entries."""
+    repo: BluetoothMetadataRepository = request.app.state.bluetooth_metadata_repository
+    return [entry.model_dump(mode="json") for entry in repo.load_all()]
+
+
+@router.post("/bluetooth/metadata/{address}")
+def save_bluetooth_metadata(
+    request: Request, address: str, update: BluetoothDeviceMetadataUpdate
+) -> dict:
+    """Save (create or update) the metadata note for a Bluetooth device."""
+    repo: BluetoothMetadataRepository = request.app.state.bluetooth_metadata_repository
+    entry = BluetoothDeviceMetadata(address=address, name=update.name, note=update.note)
+    return repo.upsert(entry).model_dump(mode="json")
 
 
 async def _read_characteristic_value(client: BleakClient, characteristic) -> str | None:

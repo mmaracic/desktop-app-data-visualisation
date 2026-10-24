@@ -5,6 +5,7 @@ import asyncio
 import logging
 import random
 import threading
+from pathlib import Path
 from threading import Semaphore
 
 import fastapi
@@ -19,6 +20,7 @@ from src.api import api
 from src.colored_log_formatter import ColoredLogFormatter
 from src.config.environment_config import EnvironmentConfig
 from src.database.azure_repository import AzureRepository
+from src.database.bluetooth_metadata_repository import BluetoothMetadataRepository
 from src.dev_proxy import _dev_proxy
 
 log_handler = logging.StreamHandler()
@@ -54,6 +56,9 @@ async def lifespan(app: fastapi.FastAPI):
         connection_string=settings.azure_cosmos_connection_string,
         database_name=settings.azure_cosmos_database_name,
         container_name="your_container_name",  # Replace with your actual container name
+    )
+    app.state.bluetooth_metadata_repository = BluetoothMetadataRepository(
+        file_path=Path("data") / "bluetooth_metadata.json"
     )
     app.state.camera_streamer = None
     yield

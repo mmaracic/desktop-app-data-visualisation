@@ -30,6 +30,13 @@ export interface BleDevice {
     details: string
 }
 
+export interface BluetoothDeviceMetadata {
+    address: string
+    name: string | null
+    note: string
+    updated_at: string
+}
+
 export interface BleCharacteristic {
     uuid: string
     description: string
