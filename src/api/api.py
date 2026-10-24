@@ -12,6 +12,7 @@ from fastapi import APIRouter, HTTPException, Request
 
 from src.api.camera import CameraFrameError
 from src.api.camera_streamer import CameraFrameStreamer
+from src.bluetooth.bluetooth_constants import GENERIC_GATT_SERVICE_UUID_DESCRIPTIONS
 from src.database.bluetooth_metadata_repository import BluetoothMetadataRepository
 from src.model.bluetooth_metadata import (
     BluetoothDeviceMetadata,
@@ -45,11 +46,46 @@ async def get_ble_list(request: Request) -> list[dict]:
             status_code=503,
             detail=f"Bluetooth adapter is unavailable: {e}",
         ) from e
+
+    def _enhance_details(details_dict: dict) -> dict:
+        """Enhance device details by adding descriptions to ServiceData params."""
+        PROPS_KEY = "props"
+        SERVICE_DATA_KEY = "ServiceData"
+        enhanced = details_dict.copy()
+        if (
+            PROPS_KEY in enhanced
+            and isinstance(enhanced[PROPS_KEY], dict)
+            and SERVICE_DATA_KEY in enhanced[PROPS_KEY]
+        ):
+            service_data = enhanced[PROPS_KEY][SERVICE_DATA_KEY]
+            if isinstance(service_data, list):
+                for service in service_data:
+                    if isinstance(service, dict):
+                        # Check every key in the service dict for UUID
+                        for key in service:
+                            if isinstance(key, str):
+                                uuid = key.lower()
+                                description = _known_service_description(uuid)
+                                if description is not None:
+                                    service["description"] = description
+                                    break  # Only add one description per service
+            else:
+                if isinstance(service_data, dict):
+                    # Check every key in the service dict for UUID
+                    for key in service_data:
+                        if isinstance(key, str):
+                            uuid = key.lower()
+                            description = _known_service_description(uuid)
+                            if description is not None:
+                                service_data["description"] = description
+                                break  # Only add one description per service
+        return enhanced
+
     return [
         {
             "address": device.address,
             "name": device.name,
-            "details": json.dumps(device.details, default=str),
+            "details": json.dumps(_enhance_details(device.details), default=str),
         }
         for device in devices
     ]
@@ -82,6 +118,11 @@ async def _read_characteristic_value(client: BleakClient, characteristic) -> str
         logger.warning(f"Failed to read characteristic {characteristic.uuid}: {e}")
         return None
     return raw.hex()
+
+
+def _known_service_description(uuid: str) -> str | None:
+    """Look up a UUID in the bundled GATT description table."""
+    return GENERIC_GATT_SERVICE_UUID_DESCRIPTIONS.get(uuid.lower())
 
 
 @router.get("/bluetooth/device/{address}")
