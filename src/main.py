@@ -43,6 +43,7 @@ class Config(BaseModel):
     host: str = "127.0.0.1"
     port: int | None = None
     dev: bool = False
+    fe_debug: bool = False
 
 
 @asynccontextmanager
@@ -139,8 +140,13 @@ def parse_args() -> Config:
         action="store_true",
         help="Run in development mode, pointing the webview at the Vite dev server",
     )
+    parser.add_argument(
+        "--fe-debug",
+        action="store_true",
+        help="Enable the webview inspector (right-click -> Inspect Element)",
+    )
     args = parser.parse_args()
-    return Config(host=args.host, port=args.port, dev=args.dev)
+    return Config(host=args.host, port=args.port, dev=args.dev, fe_debug=args.fe_debug)
 
 
 def main() -> None:
@@ -176,7 +182,7 @@ def main() -> None:
         logger.error("Failed to create webview window, shutting down backend server...")
         return
     window.events.shown += lambda: logger.info("Webview window is now visible")
-    webview.start()
+    webview.start(debug=config.fe_debug)
 
     logger.info("Webview window closed, shutting down backend server...")
     # Signal uvicorn to exit gracefully so the FastAPI lifespan shutdown runs.
